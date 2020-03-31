@@ -38,9 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'message.apps.MessageConfig',
-    'account.apps.AccountConfig',
-    'rest_framework.authtoken'
+    'mess.apps.MessConfig',
+    
 ]
 
 MIDDLEWARE = [
@@ -103,13 +102,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'account.Account'
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-    ),
-} 
+
+
+ 
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/

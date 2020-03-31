@@ -1,8 +1,7 @@
 from django.urls import path
-from mess.api.views import views
+from . import views
 
 urlpatterns = [
-   path('<slug:username>/list',views.list),
-   path('<slug:username>/create',views.create),
-   
+   path('login',views.login),
+   path('<slug:username>/create',views.create),  
 ]
