@@ -19,7 +19,8 @@ def create(request,username):
     data = dict()
     data["text"] = request.data.get("text") #To be seen
     data["username"] = username
-   # data["author"] = request.data.get("author")
+    if request.data.get("author"):
+        data["author"] = request.data.get("author")
     serializer = MessageSerializer(data=data,partial=True)
     if serializer.is_valid():
         serializer.save()
