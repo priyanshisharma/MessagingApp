@@ -11,22 +11,16 @@ from rest_framework.status import (
 )
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
-
-'''
-@api_view(['GET'])
-def list(request,username):
-    if request.method == 'GET':
-        queryset = Message.objects.filter(username=username)          
-        serializer = MessageSerializer(queryset,many=True)
-        return Response(serializer.data)
-'''
+from mess.models import Message
 
 
 @api_view(['POST'])
 def create(request,username):
-    data = JSONParser().parse(request) #To be seen
-    data['username']=username
-    serializer = MessageSerializer(data=data)
+    data = dict()
+    data["text"] = request.data.get("text") #To be seen
+    data["username"] = username
+   # data["author"] = request.data.get("author")
+    serializer = MessageSerializer(data=data,partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=201)
@@ -34,7 +28,7 @@ def create(request,username):
 
 
 @csrf_exempt
-@api_view(['POST','GET'])
+@api_view(['POST'])
 @permission_classes((AllowAny,))
 def login(request):
     if request.method == 'POST':
@@ -46,8 +40,12 @@ def login(request):
         if not user:
             return Response({'error': 'Invalid Credentials'},
                             status=HTTP_404_NOT_FOUND)
-        request.method = 'GET'
-        if request.method == 'GET':
-            queryset = Message.objects.filter(username=username)          
-            serializer = MessageSerializer(queryset,many=True)
-            return Response(serializer.data)
+        queryset = Message.objects.filter(username__exact=username)
+        #queryset = Message.objects.all()       
+        serializer = MessageSerializer(queryset,many=True)
+        return Response(serializer.data)
+'''
+@api_view(['GET'])
+def list(request,username):
+    if request.method == 'GET':
+'''

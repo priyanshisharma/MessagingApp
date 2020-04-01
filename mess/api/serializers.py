@@ -5,4 +5,4 @@ from mess.models import Message
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = ['is_anonymous','author','text']
+        fields = ['author','text','username']
