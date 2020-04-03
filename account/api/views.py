@@ -99,10 +99,3 @@ class ObtainAuthTokenView(APIView):
 			context['error_message'] = 'Invalid credentials'
 
 		return Response(context)
-
-
-
-
-
-
-
