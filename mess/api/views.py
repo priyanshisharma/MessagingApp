@@ -27,8 +27,11 @@ def create(request,username):
     data = dict()
     data["text"] = request.data.get("text") #To be seen
     data["username"] = username
-    if request.data.get("is_anonymous"):
-        data["is_anonymous"] = request.data.get("is_anonymous")
+    if request.data.get("author"):
+     #   data["is_anonymous"] = request.data.get("is_anonymous")
+        data["author"] = request.data.get("author")
+   # if is_anonymous:
+    #    author = models.CharField(max_length=200, default = " ")    
     serializer = MessageSerializer(data=data,partial=True)
     if serializer.is_valid():
         serializer.save()
@@ -40,8 +43,7 @@ def create(request,username):
 def list(request,username):
     if request.method == 'GET':
         queryset = Message.objects.filter(username__exact=username)
-        serializer = MessageSerializer(queryset,many=True)
-        
+        serializer = MessageSerializer(queryset,many=True)       
         return Response(serializer.data)
 
 @permission_classes([IsAuthenticated])
