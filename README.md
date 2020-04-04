@@ -11,7 +11,7 @@ This will generate a token which will help access other functions, and also abil
 
 A registered user can send amessage to username_A using his token by going to
 `/<username_A>/create`
-Entering "text" is compulsory for the same, entering "author" is optional.
+Entering "text" is compulsory for the same, entering "author" is optional, if any value is entered in author, the username is mentioned as the author, else its empty and message remains anonymous.
 
 Username A can view his list by going to `/<username_A>/list` using his token.
 He/She can view and delete particular message by the following URLs

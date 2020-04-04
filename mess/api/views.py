@@ -16,12 +16,6 @@ from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponse
 
 
-#class UserCreateAPIView(CreateAPIView):
-#    serializer_class = UserCreateSerializer
-#    queryset = User.objects.all()
-#    permission_classes = [AllowAny]
-
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create(request,username):
@@ -30,7 +24,7 @@ def create(request,username):
     data["username"] = username
     if request.data.get("author"):
      #   data["is_anonymous"] = request.data.get("is_anonymous")
-        data["author"] = request.data.get("author")
+        data["author"] = request.user.username
    # if is_anonymous:
     #    author = models.CharField(max_length=200, default = " ")    
     serializer = MessageSerializer(data=data,partial=True)
