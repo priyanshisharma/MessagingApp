@@ -13,6 +13,7 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from mess.models import Message
 from rest_framework.permissions import IsAuthenticated
+from django.http import HttpResponse
 
 
 #class UserCreateAPIView(CreateAPIView):
@@ -50,11 +51,11 @@ def list(request,username):
 @api_view(['GET'])
 def message_detail(request, pk):
     try:
-        messag = MessageSerializer.objects.get(pk=pk)
+        messag = Message.objects.get(pk=pk)
     except Message.DoesNotExist:
         return HttpResponse(status=404)
     serializer = MessageSerializer(messag)
-    serializer['pk'] = messag.pk
+    serializer.data['pk'] = messag.pk
     return Response(serializer.data)
 
 #@api_view(['POST'])
@@ -75,6 +76,7 @@ def delete(request,pk):
     except Message.DoesNotExist:
         return HttpResponse(status=404)
     operation = messa.delete()
+    data = dict()
     if operation:
         data["success"] = "delete successful"
     else:
