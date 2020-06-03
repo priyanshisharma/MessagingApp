@@ -24,7 +24,7 @@ using his/her token.
 1. Create a virtual environment with Python3.7: `virtualenv env -p python3.7`. If you dont have `python3.7` yet then you can install it with:
     1. linux(ubuntu/debian) - `sudo apt install python3.7`
     2. windows - Download installer from https://www.python.org/downloads/release/python-370/.
-2. Activate the virutal environment: `source env/bin/activate`
+2. Activate the virtual environment: `source env/bin/activate`
 3. Install all the dependencies in `requirements.txt` file: `pip install -r requirements.txt`
 4. Migrate the migrations: `python manage.py migrate`
 5. Run the app: `python manage.py runserver`
