@@ -53,7 +53,7 @@ class Account(AbstractBaseUser):
 	objects = MyAccountManager()
 
 	def __str__(self):
-		return self.email
+		return f'{self.email}'
 
 	# For checking permissions. to keep it simple all admin have ALL permissons
 	def has_perm(self, perm, obj=None):

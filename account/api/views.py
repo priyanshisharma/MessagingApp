@@ -13,38 +13,36 @@ from account.models import Account
 from rest_framework.authtoken.models import Token
 
 
-@api_view(['POST', ])
-@permission_classes([])
-@authentication_classes([])
+@api_view(['POST'])
 def registration_view(request):
-
-	if request.method == 'POST':
-		data = {}
-		email = request.data.get('email', '0').lower()
-		if validate_email(email) != None:
-			data['error_message'] = 'That email is already in use.'
-			data['response'] = 'Error'
-			return Response(data)
-
-		username = request.data.get('username', '0')
-		if validate_username(username) != None:
-			data['error_message'] = 'That username is already in use.'
-			data['response'] = 'Error'
-			return Response(data)
-
-		serializer = RegistrationSerializer(data=request.data)
-		
-		if serializer.is_valid():
-			account = serializer.save()
-			data['response'] = 'successfully registered new user.'
-			data['email'] = account.email
-			data['username'] = account.username
-			data['pk'] = account.pk
-			token = Token.objects.get_or_create(user=account).key
-			data['token'] = token
-		else:
-			data = serializer.errors
+	'''Following view is meant to register new users'''
+	
+	data = {}
+	email = request.data.get('email', '0').lower() 
+	if validate_email(email) != None:
+		data['error_message'] = 'That email is already in use.'
+		data['response'] = 'Error'
 		return Response(data)
+
+	username = request.data.get('username', '0')
+	if validate_username(username) != None:
+		data['error_message'] = 'That username is already in use.'
+		data['response'] = 'Error'
+		return Response(data)
+
+	serializer = RegistrationSerializer(data=request.data)
+	
+	if serializer.is_valid():
+		account = serializer.save()
+		data['response'] = 'successfully registered new user.'
+		data['email'] = account.email
+		data['username'] = account.username
+		data['pk'] = account.pk
+		token = Token.objects.get_or_create(user=account).key
+		data['token'] = token
+	else:
+		data = serializer.errors
+	return Response(data)
 
 def validate_email(email):
 	account = None
@@ -66,18 +64,7 @@ def validate_username(username):
 
 
 
-
-
-
-
-
-
-
-
 class ObtainAuthTokenView(APIView):
-
-	authentication_classes = []
-	permission_classes = []
 
 	def post(self, request):
 		context = {}
