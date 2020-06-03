@@ -1,106 +1,78 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from .serializers import MessageSerializer
-from rest_framework.parsers import JSONParser
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.permissions import AllowAny
-from rest_framework.status import (
-    HTTP_400_BAD_REQUEST,
-    HTTP_404_NOT_FOUND,
-    HTTP_200_OK
-)
-from django.contrib.auth import authenticate
-from rest_framework.authtoken.models import Token
-from mess.models import Message
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from django.http import HttpResponse
+from mess.models import Message
+from .serializers import MessageSerializer
 
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def create(request,username):
+def create(request, username):
+    '''
+    This Creates a message to a particular
+    username from the authenticated user.
+    '''
+
     data = dict()
-    data["text"] = request.data.get("text") #To be seen
+    data["text"] = request.data.get("text")
     data["username"] = username
+
+    '''
+    If the user wishes to be the author, it needs to
+    specify the author key of their message. Else
+    it will be filled with anonymous.
+    '''
     if request.data.get("author"):
-     #   data["is_anonymous"] = request.data.get("is_anonymous")
+        '''The author shall be the username irrespective of the author entered.'''
         data["author"] = request.user.username
-    else :
+    else:
         data["author"] = "Anonymous"
-   # if is_anonymous:
-    #    author = models.CharField(max_length=200, default = " ")    
-    serializer = MessageSerializer(data=data,partial=True)
+
+    serializer = MessageSerializer(data=data, partial=True)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, status=201)
-    return Response(serializer.errors, status=400)
+        return Response(serializer.data, status.HTTP_201_CREATED)
+    return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
 
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
-def list(request,username):
-    if request.method == 'GET':
-        queryset = Message.objects.filter(username__exact=username)
-        serializer = MessageSerializer(queryset,many=True)       
-        return Response(serializer.data)
+def list(request, username):
+    '''This lists the all the messages directed to a particular user.'''
+    queryset = Message.objects.filter(username__exact=username)
+    serializer = MessageSerializer(queryset, many=True)
+    return Response(serializer.data, status.HTTP_200_OK)
+
 
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def message_detail(request, pk):
+    '''This allows the user to view a particular message'''
     try:
         messag = Message.objects.get(pk=pk)
     except Message.DoesNotExist:
-        return HttpResponse(status=404)
+        return Response({"details":"Message Does Not Exist"}, status.HTTP_404_NOT_FOUND)
+
     serializer = MessageSerializer(messag)
     serializer.data['pk'] = messag.pk
-    return Response(serializer.data)
-
-#@api_view(['POST'])
-#def create(request):
-#    data = JSONParser().parse(request) #To be seen
-#    serializer = PostSerializer(data=data)
-#    if serializer.is_valid():
-#        serializer.save()
-#        return Response(serializer.data, status=201)
-#    return Response(serializer.errors, status=400)
+    return Response(serializer.data, status.HTTP_200_OK)
 
 
 @permission_classes([IsAuthenticated])
 @api_view(['DELETE'])
-def delete(request,pk):
+def delete(request, pk):
+    '''This allows a user to delete its message'''
     try:
         messa = Message.objects.get(pk=pk)
     except Message.DoesNotExist:
-        return HttpResponse(status=404)
+        return Response({"detail":"Message does not exist"}, status.HTTP_404_NOT_FOUND)
     operation = messa.delete()
-    data = dict()
+
+    res = dict()
     if operation:
-        data["success"] = "delete successful"
+        res["success"] = "delete successful"
     else:
-        data["failure"] = "delete failed"
-    return Response(data=data)
+        res["failure"] = "delete failed"
 
-
-
-#@csrf_exempt
-#@api_view(['POST'])
-#@permission_classes((AllowAny,))
-#def login(request):
-#    if request.method == 'POST':
-#        email = request.data.get("email")
-#        password = request.data.get("password")
-#        username = request.data.get("username")
-#        if username is None or password is None:
-#            return Response({'error': 'Please provide both email and password'},status=HTTP_400_BAD_REQUEST)
-#        user = authenticate(email=email, password=password)
-#        if not user:
-#            return Response({'error': 'Invalid Credentials'},
-#                            status=HTTP_404_NOT_FOUND)
-#        queryset = Message.objects.filter(username__exact=username)
-        #queryset = Message.objects.all()       
-#        serializer = MessageSerializer(queryset,many=True)
-#        return Response(serializer.data)
-'''
-@api_view(['GET'])
-def list(request,username):
-    if request.method == 'GET':
-'''
+    return Response(res, status.HTTP_200_OK)

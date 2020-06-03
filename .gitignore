@@ -9,3 +9,6 @@ db.sqlite3
 **/__pycache__
 .env
 *.pyc
+
+#for mac
+**/.DS_Store
